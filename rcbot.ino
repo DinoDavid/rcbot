@@ -8,8 +8,14 @@ char incomingByte;
 #define M2 7  // Control pin 2 for motor 2
 
 //Leds connected to Arduino UNO Pin 9
-const int light  = 9;
+const int light  = 3;
 int l = 0;
+
+//RGB LED
+int redPin = 11;
+int greenPin = 9;
+int bluePin = 10;
+#define COMMON_ANODE
 
 //Bluetooth (HC-05) State pin connected to Arduino UNO Pin 8
 const int BTState = 8;
@@ -17,17 +23,18 @@ const int BTState = 8;
 void forward() {
   digitalWrite(E1, HIGH);
   digitalWrite(M1, HIGH);
+  blue();
 }
 
 void backward() {
   digitalWrite(E1, HIGH);
   digitalWrite(M1, LOW);
+  red();
 }
 
 void halt() {
   analogWrite(E1, 0);
-  analogWrite(E2, 0);
-  
+  analogWrite(E2, 0);  
 }
 
 void left() {
@@ -40,6 +47,51 @@ void right() {
   digitalWrite(M2, LOW);
 }
 
+void setColor(int red, int green, int blue)
+{   
+  #ifdef COMMON_ANODE
+  red = 255 - red;
+  green = 255 - green;
+  blue = 255 - blue;
+  #endif
+  
+  analogWrite(redPin, red);
+  analogWrite(greenPin, green);
+  analogWrite(bluePin, blue);  
+}
+void yellow(){
+  setColor(255, 255, 0);
+}
+
+void pink(){
+  setColor(255, 0, 255);
+}
+
+void aqua(){
+  setColor(0, 255, 255);
+}
+
+void red(){
+  setColor(255, 0, 0); 
+}
+
+void green(){
+  setColor(0, 255, 0); 
+}
+
+void blue(){
+  setColor(0, 0, 255); 
+}
+
+void white(){
+  setColor(255, 255, 255); 
+}
+
+void black(){
+  setColor(0, 0, 0); 
+}
+
+
 void setup() {
     pinMode(E1, OUTPUT);
     pinMode(E2, OUTPUT);
@@ -48,6 +100,10 @@ void setup() {
     pinMode(M2, OUTPUT); 
 
     pinMode(light, OUTPUT); 
+    pinMode(redPin, OUTPUT);
+    pinMode(greenPin, OUTPUT);
+    pinMode(bluePin, OUTPUT); 
+    
     pinMode(BTState, INPUT);
 
     Serial.begin(9600);
@@ -57,7 +113,7 @@ void loop() {
 //Stop car when connection lost or bluetooth disconnected
   if(digitalRead(BTState)==LOW)
     halt();
-  
+          
   int c = Serial.read();
 
   if (c == 'F' || c == 'G' || c == 'I')
@@ -68,8 +124,7 @@ void loop() {
     left();
   if (c == 'I' || c == 'J' || c == 'R')
     right();
-  
-//Light    
+    
   if (c == 'W'){
     if (l == 0){
       digitalWrite(light, HIGH);
@@ -94,6 +149,10 @@ void loop() {
     case -1:
       break; /* Fjern denne for a bruke spam-metoden. */
     default: /* Fanger release signal hvis ^ er ufjernet. */
-      halt();    
+      halt();
+      black();    
   }
 }
+
+
+
