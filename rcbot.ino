@@ -23,9 +23,6 @@ int dataPin = 13;   //pin 14 on the 75HC595
 int latchPin = 3;  //pin 12 on the 75HC595
 int clkPin = 12; //pin 10 on the 75HC595
 
-int byte1 = 0;         
-int byte2 = 0;
-
 //Bluetooth (HC-05) State pin connected to Arduino UNO Pin 8
 const int BTState = 8;
   
@@ -102,14 +99,14 @@ void black(){
 
 /*
 void knight_rider(){
-  for (byte2 = 0; byte2 < 256; byte2++)               //Outer Loop
-    {
-        for (byte1 = 0; byte1 < 256; byte1++)            //Inner Loop
-        {
-        digitalWrite(latchPin, LOW);            //Pull latch LOW to start sending data
+  int byte1, byte2;
+
+  for (byte2 = 0; byte2 < 256; byte2++) {
+    for (byte1 = 0; byte1 < 256; byte1++) {
+        digitalWrite(latchPin, LOW); //Pull latch LOW to start sending data
         shiftOut(dataPin, clkPin, MSBFIRST, byte1); //Send the data byte 1
         shiftOut(dataPin, clkPin, MSBFIRST, byte2); //Send the data byte 2
-        digitalWrite(latchPin, HIGH);           //Pull latch HIGH to stop sending data
+        digitalWrite(latchPin, HIGH); //Pull latch HIGH to stop sending data
         delay(100);
     }
   }
