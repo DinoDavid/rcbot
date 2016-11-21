@@ -60,32 +60,13 @@ void setColor(int red, int green, int blue)
   analogWrite(greenPin, green);
   analogWrite(bluePin, blue);  
 }
-void yellow(){
-  setColor(255, 255, 0);
-}
-
-void pink(){
-  setColor(255, 0, 255);
-}
-
-void aqua(){
-  setColor(0, 255, 255);
-}
 
 void red(){
   setColor(255, 0, 0); 
 }
 
-void green(){
-  setColor(0, 255, 0); 
-}
-
 void blue(){
   setColor(0, 0, 255); 
-}
-
-void white(){
-  setColor(255, 255, 255); 
 }
 
 void black(){
