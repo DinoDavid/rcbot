@@ -1,10 +1,10 @@
-
+/* macros and defines */
 //L298P Connection  
-#define E1 5  // Enable Pin for motor 1
-#define E2 6  // Enable Pin for motor 2
+#define E1 5  //enable motor 1
+#define E2 6  //enable motor 2
 
-#define M1 4  // Control pin 1 for motor 1
-#define M2 7  // Control pin 2 for motor 2
+#define M1 4  //control motor 1
+#define M2 7  //control motor 2
 
 #define COMMON_ANODE
 
@@ -19,12 +19,13 @@ int l = 0;
 int redPin = 11;
 int greenPin = 9;
 int bluePin = 10;
-int j = 0; //Knight Rider back lights
-int dataPin = 13;   //pin 14 on the 75HC595
-int latchPin = 3;  //pin 12 on the 75HC595
+int j = 0; //knight rider back lights
+int dataPin = 13; //pin 14 on the 75HC595
+int latchPin = 3; //pin 12 on the 75HC595
 int clkPin = 12; //pin 10 on the 75HC595
 const int BTState = 8; //bluetooth (HC-05) state
-  
+
+/* function definitions */
 void forward() {
   digitalWrite(E1, HIGH);
   digitalWrite(M1, HIGH);
@@ -52,12 +53,11 @@ void right() {
   digitalWrite(M2, LOW);
 }
 
-void setColor(int red, int green, int blue)
-{   
+void setColor(int red, int green, int blue) {
   #ifdef COMMON_ANODE
-  red = 255 - red;
-  green = 255 - green;
-  blue = 255 - blue;
+    red = 255 - red;
+    green = 255 - green;
+    blue = 255 - blue;
   #endif
   
   analogWrite(redPin, red);
@@ -66,21 +66,21 @@ void setColor(int red, int green, int blue)
 }
 
 /*
-void knight_rider(){
+void knight_rider() {
   int byte1, byte2;
 
   for (byte2 = 0; byte2 < 256; byte2++) {
     for (byte1 = 0; byte1 < 256; byte1++) {
-        digitalWrite(latchPin, LOW); //Pull latch LOW to start sending data
-        shiftOut(dataPin, clkPin, MSBFIRST, byte1); //Send the data byte 1
-        shiftOut(dataPin, clkPin, MSBFIRST, byte2); //Send the data byte 2
-        digitalWrite(latchPin, HIGH); //Pull latch HIGH to stop sending data
+        digitalWrite(latchPin, LOW); //pull latch LOW to start sending data
+        shiftOut(dataPin, clkPin, MSBFIRST, byte1); //send the data byte 1
+        shiftOut(dataPin, clkPin, MSBFIRST, byte2); //send the data byte 2
+        digitalWrite(latchPin, HIGH); //pull latch HIGH to stop sending data
         delay(100);
     }
   }
 }
-
 */
+
 void setup() {
     pinMode(E1, OUTPUT);
     pinMode(E2, OUTPUT);
@@ -103,9 +103,8 @@ void setup() {
 }
 
 void loop() {
-//Stop car when connection lost or bluetooth disconnected
-  if(digitalRead(BTState)==LOW)
-    halt();
+  if(digitalRead(BTState) == LOW)
+    halt(); //connection lost
           
   int c = Serial.read();
 
@@ -118,32 +117,30 @@ void loop() {
   if (c == 'I' || c == 'J' || c == 'R')
     right();
 
-//Front lights
-  if (c == 'W'){
-    if (l == 0){
+//front lights
+  if (c == 'W') {
+    if (!l){
       digitalWrite(light, HIGH);
-      l=1;
-    }
-    else if (l == 1){
+      l = 1;
+    } else {
       digitalWrite(light, LOW); 
-      l=0;
+      l = 0;
     }
-    c='w';
+    c = 'w';
   }
 
-//Back lights
-   if (c == 'U'){
-    if (j == 0){
+//back lights
+  if (c == 'U') {
+    if (!j) {
       //knight_rider();
-      j=1;
-    }
-    else if (j == 1){
+      j = 1;
+    } else {
       digitalWrite(dataPin,LOW);     
       digitalWrite(latchPin,HIGH);     
       digitalWrite(clkPin,LOW); 
-      j=0;
+      j = 0;
     }
-    c='u';
+    c = 'u';
   }
     
   switch(c) {
