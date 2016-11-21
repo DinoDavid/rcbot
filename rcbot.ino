@@ -8,6 +8,10 @@
 
 #define COMMON_ANODE
 
+#define RED (255, 0, 0)
+#define BLUE (0, 0, 255)
+#define BLACK (0, 0, 0)
+
 /* global variables */
 char incomingByte;
 const int light  = 2;
@@ -24,13 +28,13 @@ const int BTState = 8; //bluetooth (HC-05) state
 void forward() {
   digitalWrite(E1, HIGH);
   digitalWrite(M1, HIGH);
-  blue();
+  setColor(BLUE); 
 }
 
 void backward() {
   digitalWrite(E1, HIGH);
   digitalWrite(M1, LOW);
-  red();
+  setColor(RED); 
 }
 
 void halt() {
@@ -59,18 +63,6 @@ void setColor(int red, int green, int blue)
   analogWrite(redPin, red);
   analogWrite(greenPin, green);
   analogWrite(bluePin, blue);  
-}
-
-void red(){
-  setColor(255, 0, 0); 
-}
-
-void blue(){
-  setColor(0, 0, 255); 
-}
-
-void black(){
-  setColor(0, 0, 0); 
 }
 
 /*
@@ -167,6 +159,6 @@ void loop() {
       break; /* Fjern denne for a bruke spam-metoden. */
     default: /* Fanger release signal hvis ^ er ufjernet. */
       halt();
-      black();    
+      setColor(BLACK); 
   }
 }
