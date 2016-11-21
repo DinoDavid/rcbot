@@ -1,4 +1,3 @@
-char incomingByte;
 
 //L298P Connection  
 #define E1 5  // Enable Pin for motor 1
@@ -7,24 +6,20 @@ char incomingByte;
 #define M1 4  // Control pin 1 for motor 1
 #define M2 7  // Control pin 2 for motor 2
 
-//Leds connected to Arduino UNO Pin 9
+#define COMMON_ANODE
+
+/* global variables */
+char incomingByte;
 const int light  = 2;
 int l = 0;
-
-//RGB LED
 int redPin = 11;
 int greenPin = 9;
 int bluePin = 10;
-#define COMMON_ANODE
-
-//Knight Rider back lights
-int j = 0;
+int j = 0; //Knight Rider back lights
 int dataPin = 13;   //pin 14 on the 75HC595
 int latchPin = 3;  //pin 12 on the 75HC595
 int clkPin = 12; //pin 10 on the 75HC595
-
-//Bluetooth (HC-05) State pin connected to Arduino UNO Pin 8
-const int BTState = 8;
+const int BTState = 8; //bluetooth (HC-05) state
   
 void forward() {
   digitalWrite(E1, HIGH);
