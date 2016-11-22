@@ -28,6 +28,7 @@ int dataPin = 13; //pin 14 on the 75HC595
 int latchPin = 3; //pin 12 on the 75HC595
 int clkPin = 12; //pin 10 on the 75HC595
 const int BTState = 8; //bluetooth (HC-05) state
+unsigned long time = 0;
 
 /* function definitions */
 void forward() {
@@ -86,7 +87,6 @@ void knight_rider() {
   }
 
   backlights(byte1, byte2);
-  delay(45);
 }
 
 void backlights(char b1, char b2) {
@@ -138,7 +138,10 @@ void loop() {
 
   if (c == 'U') //backlight
     nrstate = !nrstate;
-  knight_rider();
+  if (millis() - time > 40) {
+    knight_rider();
+    time = millis();
+  }
     
   switch(c) {
     case 'F':
