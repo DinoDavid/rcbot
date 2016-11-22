@@ -12,14 +12,18 @@
 #define BLUE 0, 0, 255
 #define BLACK 0, 0, 0
 
+/* types */
+enum {OFF, UP, DOWN};
+
 /* global variables */
 char incomingByte;
-int hlpin = 2; //headlight pin
 int hlstate = 0; //headlight state
+int hlpin = 2; //headlight pin
+int nrstate = OFF; //nightrider state
+int nrpos = 1; //Night Rider led position
 int redPin = 11;
 int greenPin = 9;
 int bluePin = 10;
-int j = 0; //knight rider backlight
 int dataPin = 13; //pin 14 on the 75HC595
 int latchPin = 3; //pin 12 on the 75HC595
 int clkPin = 12; //pin 10 on the 75HC595
@@ -65,21 +69,28 @@ void setColor(int red, int green, int blue) {
   analogWrite(bluePin, blue);  
 }
 
-/*
 void knight_rider() {
-  int byte1, byte2;
+  char byte1, byte2;
 
-  for (byte2 = 0; byte2 < 256; byte2++) {
-    for (byte1 = 0; byte1 < 256; byte1++) {
-        digitalWrite(latchPin, LOW); //pull latch LOW to start sending data
-        shiftOut(dataPin, clkPin, MSBFIRST, byte1); //send the data byte 1
-        shiftOut(dataPin, clkPin, MSBFIRST, byte2); //send the data byte 2
-        digitalWrite(latchPin, HIGH); //pull latch HIGH to stop sending data
-        delay(100);
-    }
+  if (nrpos > (1 << 13)) //TODO check correct number
+    nrstate = DOWN;
+  else if (nrpos < (1 << 1))
+    nrstate = UP;
+
+  if (nrstate == OFF) {
+    byte1 = byte2 = 0;
+    //TODO dont spam this
+  } else {
+    (nrstate == UP) ? nrpos <<= 1 : nrpos >>= 1;
+    byte1 = ((char*)&nrpos)[0];
+    byte2 = ((char*)&nrpos)[1];
   }
+
+  digitalWrite(latchPin, LOW); //commence transmission
+  shiftOut(dataPin, clkPin, MSBFIRST, byte1); //send byte 1
+  shiftOut(dataPin, clkPin, MSBFIRST, byte2); //send byte 2
+  digitalWrite(latchPin, HIGH); //close transmission
 }
-*/
 
 void setup() {
     pinMode(E1, OUTPUT);
@@ -121,19 +132,9 @@ void loop() {
     hlstate ? digitalWrite(hlpin, (hlstate = LOW))
             : digitalWrite(hlpin, (hlstate = HIGH));
 
-//backlight
-  if (c == 'U') {
-    if (!j) {
-      //knight_rider();
-      j = 1;
-    } else {
-      digitalWrite(dataPin,LOW);     
-      digitalWrite(latchPin,HIGH);     
-      digitalWrite(clkPin,LOW); 
-      j = 0;
-    }
-    c = 'u';
-  }
+  if (c == 'U') //backlight
+    nrstate = !nrstate;
+  knight_rider();
     
   switch(c) {
     case 'F':
