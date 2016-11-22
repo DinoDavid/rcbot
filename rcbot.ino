@@ -20,7 +20,7 @@ char incomingByte;
 int hlstate = 0; //headlight state
 int hlpin = 2; //headlight pin
 int nrstate = OFF; //nightrider state
-int nrpos = 1; //Night Rider led position
+unsigned int nrpos = 1; //Night Rider led position
 int redPin = 11;
 int greenPin = 9;
 int bluePin = 10;
@@ -68,11 +68,10 @@ void setColor(int red, int green, int blue) {
   analogWrite(greenPin, green);
   analogWrite(bluePin, blue);  
 }
-
 void knight_rider() {
   char byte1, byte2;
 
-  if (nrpos > (1 << 13)) //TODO check correct number
+  if (nrpos >  (1 << 14)) //TODO check correct number
     nrstate = DOWN;
   else if (nrpos < (1 << 1))
     nrstate = UP;
@@ -87,12 +86,13 @@ void knight_rider() {
   }
 
   backlights(byte1, byte2);
+  delay(45);
 }
 
 void backlights(char b1, char b2) {
   digitalWrite(latchPin, LOW); //commence transmission
-  shiftOut(dataPin, clkPin, MSBFIRST, b1); //send byte 1
   shiftOut(dataPin, clkPin, MSBFIRST, b2); //send byte 2
+  shiftOut(dataPin, clkPin, MSBFIRST, b1); //send byte 1
   digitalWrite(latchPin, HIGH); //close transmission
 }
 
