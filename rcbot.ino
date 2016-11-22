@@ -86,9 +86,13 @@ void knight_rider() {
     byte2 = ((char*)&nrpos)[1];
   }
 
+  backlights(byte1, byte2);
+}
+
+void backlights(char b1, char b2) {
   digitalWrite(latchPin, LOW); //commence transmission
-  shiftOut(dataPin, clkPin, MSBFIRST, byte1); //send byte 1
-  shiftOut(dataPin, clkPin, MSBFIRST, byte2); //send byte 2
+  shiftOut(dataPin, clkPin, MSBFIRST, b1); //send byte 1
+  shiftOut(dataPin, clkPin, MSBFIRST, b2); //send byte 2
   digitalWrite(latchPin, HIGH); //close transmission
 }
 
