@@ -14,12 +14,12 @@
 
 /* global variables */
 char incomingByte;
-const int light  = 2;
-int l = 0;
+int hlpin = 2; //headlight pin
+int hlstate = 0; //headlight state
 int redPin = 11;
 int greenPin = 9;
 int bluePin = 10;
-int j = 0; //knight rider back lights
+int j = 0; //knight rider backlight
 int dataPin = 13; //pin 14 on the 75HC595
 int latchPin = 3; //pin 12 on the 75HC595
 int clkPin = 12; //pin 10 on the 75HC595
@@ -88,7 +88,7 @@ void setup() {
     pinMode(M1, OUTPUT);   
     pinMode(M2, OUTPUT); 
 
-    pinMode(light, OUTPUT); 
+    pinMode(hlpin, OUTPUT); 
     pinMode(redPin, OUTPUT);
     pinMode(greenPin, OUTPUT);
     pinMode(bluePin, OUTPUT); 
@@ -117,19 +117,11 @@ void loop() {
   if (c == 'I' || c == 'J' || c == 'R')
     right();
 
-//front lights
-  if (c == 'W') {
-    if (!l){
-      digitalWrite(light, HIGH);
-      l = 1;
-    } else {
-      digitalWrite(light, LOW); 
-      l = 0;
-    }
-    c = 'w';
-  }
+  if (c == 'W') //headlight
+    hlstate ? digitalWrite(hlpin, (hlstate = LOW))
+            : digitalWrite(hlpin, (hlstate = HIGH));
 
-//back lights
+//backlight
   if (c == 'U') {
     if (!j) {
       //knight_rider();
