@@ -8,9 +8,9 @@
 
 #define COMMON_ANODE
 
-#define RED (255, 0, 0)
-#define BLUE (0, 0, 255)
-#define BLACK (0, 0, 0)
+#define RED 255, 0, 0
+#define BLUE 0, 0, 255
+#define BLACK 0, 0, 0
 
 /* global variables */
 char incomingByte;
@@ -156,6 +156,6 @@ void loop() {
       break; /* Fjern denne for a bruke spam-metoden. */
     default: /* Fanger release signal hvis ^ er ufjernet. */
       halt();
-      setColor(BLACK); 
+      setColor(BLACK);
   }
 }
