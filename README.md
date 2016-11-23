@@ -1,16 +1,14 @@
 # RCBOT
 Arduino controlled robot
-##TODO:
 
-##Software:
+## TODO
+### Software
 * Drive and turn
 * Knight rider 3 diodes sequence
-* Knight rider turns automatically on when connected to the bluetooth app
+* Knight rider should be off when connecting to the bluetooth app
 * Fix light buttons
 
-
-
-##Hardware:
-
+### Hardware
 * Increase battery capasity
 * Reduce weight
+* Order shift registers correctly
