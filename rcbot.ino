@@ -25,9 +25,9 @@ int nrdata = 13; //pin 14 on the 75HC595
 int nrlatch = 3; //pin 12 on the 75HC595
 int nrclk = 12; //pin 10 on the 75HC595
 unsigned int nrpos = 1; //nightrider led position
-int ledr = 11; // LED pin red
-int ledg = 9; // LED pin green
-int ledb = 10; // LED pin blue
+int ledr = 11; //LED pin red
+int ledg = 9; //LED pin green
+int ledb = 10; //LED pin blue
 
 /* function definitions */
 void forward() {
@@ -63,7 +63,7 @@ void setColor(int red, int green, int blue) {
     green = 255 - green;
     blue = 255 - blue;
   #endif
-  // TODO it is always defined. Remove ifdef guards
+  //TODO it is always defined. Remove ifdef guards
   
   analogWrite(ledr, red);
   analogWrite(ledg, green);
@@ -91,7 +91,7 @@ void knight_rider() {
 
 void backlights(char b1, char b2) {
   digitalWrite(nrlatch, LOW); //commence transmission
-  shiftOut(nrdata, nrclk, MSBFIRST, b2); // dont reverse order, fix hardware
+  shiftOut(nrdata, nrclk, MSBFIRST, b2); //dont reverse order, fix hardware
   shiftOut(nrdata, nrclk, MSBFIRST, b1);
   digitalWrite(nrlatch, HIGH); //close transmission
 }
@@ -122,8 +122,8 @@ void loop() {
     halt(); //connection lost
           
   int c = Serial.read();
-  // TODO if old command, skip the if tests
-  // TODO if no input, skip the if tests
+  //TODO if old command, skip the if tests
+  //TODO if no input, skip the if tests
 
   if (c == 'F' || c == 'G' || c == 'I')
     forward();
@@ -154,9 +154,9 @@ void loop() {
     case 'H':
     case 'J':
     case -1:
-      break; // Fjern denne for a bruke spam-metoden
-    default: // Fanger release signal hvis ^ er ufjernet
-      halt(); // TODO catch stop signal explicitly
+      break; //remove to use spam method
+    default: //catch release signal
+      halt(); //TODO catch stop signal explicitly
       setColor(BLACK);
   }
 }
