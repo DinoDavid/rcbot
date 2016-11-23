@@ -133,8 +133,7 @@ void loop() {
     right();
 
   if (c == 'W') //headlight
-    hlstate ? digitalWrite(hlpin, (hlstate = LOW))
-            : digitalWrite(hlpin, (hlstate = HIGH));
+    digitalWrite(hlpin, (hlstate = !hlstate));
 
   if (c == 'U') //backlight
     nrstate = !nrstate;
