@@ -64,6 +64,7 @@ void setColor(int red, int green, int blue) {
     green = 255 - green;
     blue = 255 - blue;
   #endif
+  // TODO it is always defined. Remove ifdef guards
   
   analogWrite(redPin, red);
   analogWrite(greenPin, green);
@@ -72,7 +73,7 @@ void setColor(int red, int green, int blue) {
 void knight_rider() {
   char byte1, byte2;
 
-  if (nrpos >  (1 << 14)) //TODO check correct number
+  if (nrpos >  (1 << 14))
     nrstate = DOWN;
   else if (nrpos < (1 << 1))
     nrstate = UP;
@@ -91,8 +92,8 @@ void knight_rider() {
 
 void backlights(char b1, char b2) {
   digitalWrite(latchPin, LOW); //commence transmission
-  shiftOut(dataPin, clkPin, MSBFIRST, b2); //send byte 2
-  shiftOut(dataPin, clkPin, MSBFIRST, b1); //send byte 1
+  shiftOut(dataPin, clkPin, MSBFIRST, b2); // dont reverse order, fix hardware
+  shiftOut(dataPin, clkPin, MSBFIRST, b1);
   digitalWrite(latchPin, HIGH); //close transmission
 }
 
@@ -122,6 +123,8 @@ void loop() {
     halt(); //connection lost
           
   int c = Serial.read();
+  // TODO if old command, skip the if tests
+  // TODO if no input, skip the if tests
 
   if (c == 'F' || c == 'G' || c == 'I')
     forward();
@@ -152,9 +155,9 @@ void loop() {
     case 'H':
     case 'J':
     case -1:
-      break; /* Fjern denne for a bruke spam-metoden. */
-    default: /* Fanger release signal hvis ^ er ufjernet. */
-      halt();
+      break; // Fjern denne for a bruke spam-metoden
+    default: // Fanger release signal hvis ^ er ufjernet
+      halt(); // TODO catch stop signal explicitly
       setColor(BLACK);
   }
 }
