@@ -133,6 +133,10 @@ void loop() {
     left();
   if (c == 'I' || c == 'J' || c == 'R')
     right();
+  if (c == 'S') {
+      halt();
+      setColor(BLACK);
+  }
 
   if (c == 'W') //headlight
     digitalWrite(hlpin, (hlstate = !hlstate));
@@ -142,21 +146,5 @@ void loop() {
   if (millis() - time > 40) {
     knight_rider();
     time = millis();
-  }
-    
-  switch(c) {
-    case 'F':
-    case 'B':
-    case 'L':
-    case 'R':
-    case 'G':
-    case 'I':
-    case 'H':
-    case 'J':
-    case -1:
-      break; //remove to use spam method
-    default: //catch release signal
-      halt(); //TODO catch stop signal explicitly
-      setColor(BLACK);
   }
 }
