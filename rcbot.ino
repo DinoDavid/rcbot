@@ -16,19 +16,18 @@
 enum {OFF, UP, DOWN};
 
 /* global variables */
-char incomingByte;
+unsigned long time = 0;
+int btstate = 8; //bluetooth (HC-05) state
 int hlstate = 0; //headlight state
 int hlpin = 2; //headlight pin
 int nrstate = OFF; //nightrider state
-unsigned int nrpos = 1; //Night Rider led position
-int redPin = 11;
-int greenPin = 9;
-int bluePin = 10;
-int dataPin = 13; //pin 14 on the 75HC595
-int latchPin = 3; //pin 12 on the 75HC595
-int clkPin = 12; //pin 10 on the 75HC595
-const int BTState = 8; //bluetooth (HC-05) state
-unsigned long time = 0;
+int nrdata = 13; //pin 14 on the 75HC595
+int nrlatch = 3; //pin 12 on the 75HC595
+int nrclk = 12; //pin 10 on the 75HC595
+unsigned int nrpos = 1; //nightrider led position
+int ledr = 11; // LED pin red
+int ledg = 9; // LED pin green
+int ledb = 10; // LED pin blue
 
 /* function definitions */
 void forward() {
@@ -66,9 +65,9 @@ void setColor(int red, int green, int blue) {
   #endif
   // TODO it is always defined. Remove ifdef guards
   
-  analogWrite(redPin, red);
-  analogWrite(greenPin, green);
-  analogWrite(bluePin, blue);  
+  analogWrite(ledr, red);
+  analogWrite(ledg, green);
+  analogWrite(ledb, blue);  
 }
 void knight_rider() {
   char byte1, byte2;
@@ -91,10 +90,10 @@ void knight_rider() {
 }
 
 void backlights(char b1, char b2) {
-  digitalWrite(latchPin, LOW); //commence transmission
-  shiftOut(dataPin, clkPin, MSBFIRST, b2); // dont reverse order, fix hardware
-  shiftOut(dataPin, clkPin, MSBFIRST, b1);
-  digitalWrite(latchPin, HIGH); //close transmission
+  digitalWrite(nrlatch, LOW); //commence transmission
+  shiftOut(nrdata, nrclk, MSBFIRST, b2); // dont reverse order, fix hardware
+  shiftOut(nrdata, nrclk, MSBFIRST, b1);
+  digitalWrite(nrlatch, HIGH); //close transmission
 }
 
 void setup() {
@@ -105,21 +104,21 @@ void setup() {
     pinMode(M2, OUTPUT); 
 
     pinMode(hlpin, OUTPUT); 
-    pinMode(redPin, OUTPUT);
-    pinMode(greenPin, OUTPUT);
-    pinMode(bluePin, OUTPUT); 
+    pinMode(ledr, OUTPUT);
+    pinMode(ledg, OUTPUT);
+    pinMode(ledb, OUTPUT); 
 
-    pinMode(dataPin, OUTPUT); //DS (Serial data input)
-    pinMode(latchPin, OUTPUT); //STCP (Storage register clock input)
-    pinMode(clkPin, OUTPUT); //SHCP (Shift register clock input)
+    pinMode(nrdata, OUTPUT); //DS (Serial data input)
+    pinMode(nrlatch, OUTPUT); //STCP (Storage register clock input)
+    pinMode(nrclk, OUTPUT); //SHCP (Shift register clock input)
 
-    pinMode(BTState, INPUT);
+    pinMode(btstate, INPUT);
 
     Serial.begin(9600);
 }
 
 void loop() {
-  if(digitalRead(BTState) == LOW)
+  if(digitalRead(btstate) == LOW)
     halt(); //connection lost
           
   int c = Serial.read();
