@@ -45,6 +45,7 @@ void backward() {
 void halt() {
   analogWrite(E1, 0);
   analogWrite(E2, 0);  
+  setColor(BLACK);
 }
 
 void left() {
@@ -133,16 +134,13 @@ void loop() {
     left();
   if (c == 'I' || c == 'J' || c == 'R')
     right();
-  if (c == 'S') {
+  if (c == 'S') //stop signal
       halt();
-      setColor(BLACK);
-  }
-
   if (c == 'W') //headlight
     digitalWrite(hlpin, (hlstate = !hlstate));
-
   if (c == 'U') //backlight
     nrstate = !nrstate;
+
   if (millis() - time > 40) {
     knight_rider();
     time = millis();
