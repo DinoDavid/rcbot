@@ -1,10 +1,18 @@
 /* macros and defines */
-//L298P Connection  
-#define E1 5  //enable motor 1
-#define E2 6  //enable motor 2
+//L298P H-bridge
+#define DE 5  //drive enable
+#define DC 4  //drive control
+#define SE 6  //steer enable
+#define SC 7  //steer control
 
-#define M1 4  //control motor 1
-#define M2 7  //control motor 2
+#define HLPIN 2 //headlight pin
+#define BTSTATE 8 //bluetooth (HC-05) state
+#define NRDATA 13 //pin 14 on the 75HC595
+#define NRLATCH 3 //pin 12 on the 75HC595
+#define NRCLK 12 //pin 10 on the 75HC595
+#define LEDR 11 //LED pin red
+#define LEDG 9 //LED pin green
+#define LEDB 10 //LED pin blue
 
 #define COMMON_ANODE
 
@@ -16,45 +24,38 @@
 enum {OFF, UP, DOWN};
 
 /* global variables */
-unsigned long time = 0;
-int btstate = 8; //bluetooth (HC-05) state
 int hlstate = 0; //headlight state
-int hlpin = 2; //headlight pin
 int nrstate = OFF; //nightrider state
-int nrdata = 13; //pin 14 on the 75HC595
-int nrlatch = 3; //pin 12 on the 75HC595
-int nrclk = 12; //pin 10 on the 75HC595
 unsigned int nrpos = 1; //nightrider led position
-int ledr = 11; //LED pin red
-int ledg = 9; //LED pin green
-int ledb = 10; //LED pin blue
+unsigned long time = 0;
 
 /* function definitions */
 void forward() {
-  digitalWrite(E1, HIGH);
-  digitalWrite(M1, HIGH);
+  digitalWrite(DE, HIGH);
+  digitalWrite(DC, HIGH);
   setColor(BLUE); 
 }
 
 void backward() {
-  digitalWrite(E1, HIGH);
-  digitalWrite(M1, LOW);
+  digitalWrite(DE, HIGH);
+  digitalWrite(DC, LOW);
   setColor(RED); 
 }
 
 void halt() {
-  analogWrite(E1, 0);
-  analogWrite(E2, 0);  
+  analogWrite(DE, 0);
+  analogWrite(SE, 0);
+  setColor(BLACK);
 }
 
 void left() {
-  digitalWrite(E2, HIGH);
-  digitalWrite(M2, HIGH);
+  digitalWrite(SE, HIGH);
+  digitalWrite(SC, HIGH);
 }
 
 void right() {
-  digitalWrite(E2, HIGH);
-  digitalWrite(M2, LOW);
+  digitalWrite(SE, HIGH);
+  digitalWrite(SC, LOW);
 }
 
 void setColor(int red, int green, int blue) {
@@ -65,9 +66,9 @@ void setColor(int red, int green, int blue) {
   #endif
   //TODO it is always defined. Remove ifdef guards
   
-  analogWrite(ledr, red);
-  analogWrite(ledg, green);
-  analogWrite(ledb, blue);  
+  analogWrite(LEDR, red);
+  analogWrite(LEDG, green);
+  analogWrite(LEDB, blue);  
 }
 void knight_rider() {
   char byte1, byte2;
@@ -90,35 +91,33 @@ void knight_rider() {
 }
 
 void backlights(char b1, char b2) {
-  digitalWrite(nrlatch, LOW); //commence transmission
-  shiftOut(nrdata, nrclk, MSBFIRST, b2); //dont reverse order, fix hardware
-  shiftOut(nrdata, nrclk, MSBFIRST, b1);
-  digitalWrite(nrlatch, HIGH); //close transmission
+  digitalWrite(NRLATCH, LOW); //commence transmission
+  shiftOut(NRDATA, NRCLK, MSBFIRST, b2); //dont reverse order, fix hardware
+  shiftOut(NRDATA, NRCLK, MSBFIRST, b1);
+  digitalWrite(NRLATCH, HIGH); //close transmission
 }
 
 void setup() {
-    pinMode(E1, OUTPUT);
-    pinMode(E2, OUTPUT);
+    pinMode(DE, OUTPUT);
+    pinMode(DC, OUTPUT);
+    pinMode(SE, OUTPUT);
+    pinMode(SC, OUTPUT);
 
-    pinMode(M1, OUTPUT);   
-    pinMode(M2, OUTPUT); 
+    pinMode(HLPIN, OUTPUT);
+    pinMode(LEDR, OUTPUT);
+    pinMode(LEDG, OUTPUT);
+    pinMode(LEDB, OUTPUT);
+    pinMode(NRDATA, OUTPUT); //DS (Serial data input)
+    pinMode(NRLATCH, OUTPUT); //STCP (Storage register clock input)
+    pinMode(NRCLK, OUTPUT); //SHCP (Shift register clock input)
 
-    pinMode(hlpin, OUTPUT); 
-    pinMode(ledr, OUTPUT);
-    pinMode(ledg, OUTPUT);
-    pinMode(ledb, OUTPUT); 
-
-    pinMode(nrdata, OUTPUT); //DS (Serial data input)
-    pinMode(nrlatch, OUTPUT); //STCP (Storage register clock input)
-    pinMode(nrclk, OUTPUT); //SHCP (Shift register clock input)
-
-    pinMode(btstate, INPUT);
+    pinMode(BTSTATE, INPUT);
 
     Serial.begin(9600);
 }
 
 void loop() {
-  if(digitalRead(btstate) == LOW)
+  if(digitalRead(BTSTATE) == LOW)
     halt(); //connection lost
           
   int c = Serial.read();
@@ -133,16 +132,13 @@ void loop() {
     left();
   if (c == 'I' || c == 'J' || c == 'R')
     right();
-  if (c == 'S') {
+  if (c == 'S') //stop signal
       halt();
-      setColor(BLACK);
-  }
-
   if (c == 'W') //headlight
-    digitalWrite(hlpin, (hlstate = !hlstate));
-
+    digitalWrite(HLPIN, (hlstate = !hlstate));
   if (c == 'U') //backlight
     nrstate = !nrstate;
+
   if (millis() - time > 40) {
     knight_rider();
     time = millis();
