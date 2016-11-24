@@ -1,9 +1,9 @@
 /* macros and defines */
-//L298P Connection  
-#define E1 5  //enable motor 1
-#define E2 6  //enable motor 2
-#define M1 4  //control motor 1
-#define M2 7  //control motor 2
+//L298P H-bridge
+#define DE 5  //drive enable
+#define DC 4  //drive control
+#define SE 6  //steer enable
+#define SC 7  //steer control
 
 #define HLPIN 2 //headlight pin
 #define BTSTATE 8 //bluetooth (HC-05) state
@@ -31,31 +31,31 @@ unsigned long time = 0;
 
 /* function definitions */
 void forward() {
-  digitalWrite(E1, HIGH);
-  digitalWrite(M1, HIGH);
+  digitalWrite(DE, HIGH);
+  digitalWrite(DC, HIGH);
   setColor(BLUE); 
 }
 
 void backward() {
-  digitalWrite(E1, HIGH);
-  digitalWrite(M1, LOW);
+  digitalWrite(DE, HIGH);
+  digitalWrite(DC, LOW);
   setColor(RED); 
 }
 
 void halt() {
-  analogWrite(E1, 0);
-  analogWrite(E2, 0);  
+  analogWrite(DE, 0);
+  analogWrite(SE, 0);
   setColor(BLACK);
 }
 
 void left() {
-  digitalWrite(E2, HIGH);
-  digitalWrite(M2, HIGH);
+  digitalWrite(SE, HIGH);
+  digitalWrite(SC, HIGH);
 }
 
 void right() {
-  digitalWrite(E2, HIGH);
-  digitalWrite(M2, LOW);
+  digitalWrite(SE, HIGH);
+  digitalWrite(SC, LOW);
 }
 
 void setColor(int red, int green, int blue) {
@@ -98,17 +98,15 @@ void backlights(char b1, char b2) {
 }
 
 void setup() {
-    pinMode(E1, OUTPUT);
-    pinMode(E2, OUTPUT);
+    pinMode(DE, OUTPUT);
+    pinMode(DC, OUTPUT);
+    pinMode(SE, OUTPUT);
+    pinMode(SC, OUTPUT);
 
-    pinMode(M1, OUTPUT);   
-    pinMode(M2, OUTPUT); 
-
-    pinMode(HLPIN, OUTPUT); 
+    pinMode(HLPIN, OUTPUT);
     pinMode(LEDR, OUTPUT);
     pinMode(LEDG, OUTPUT);
-    pinMode(LEDB, OUTPUT); 
-
+    pinMode(LEDB, OUTPUT);
     pinMode(NRDATA, OUTPUT); //DS (Serial data input)
     pinMode(NRLATCH, OUTPUT); //STCP (Storage register clock input)
     pinMode(NRCLK, OUTPUT); //SHCP (Shift register clock input)
