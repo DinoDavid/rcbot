@@ -68,6 +68,22 @@ void move() {
   digitalWrite(SC, dir.l);
 }
 
+void lights(int c) {
+  if (c == 'W') //headlight
+    digitalWrite(HLPIN, (hlstate = !hlstate));
+  if (c == 'U') //backlight
+    krstate = !krstate;
+  if (dir.d)
+    dir.f ? setColor(BLUE) : setColor(RED);
+  if (!dir.d && !dir.s)
+    setColor(BLACK);
+
+  if (millis() - time > 40) {
+    knightrider();
+    time = millis();
+  }
+}
+
 void setColor(int red, int green, int blue) {
   #ifdef COMMON_ANODE
     red = 255 - red;
@@ -138,14 +154,5 @@ void loop() {
 
   setcourse(c);
   move();
-
-  if (c == 'W') //headlight
-    digitalWrite(HLPIN, (hlstate = !hlstate));
-  if (c == 'U') //backlight
-    krstate = !krstate;
-
-  if (millis() - time > 40) {
-    knightrider();
-    time = millis();
-  }
+  lights(c);
 }
