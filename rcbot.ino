@@ -108,24 +108,24 @@ void backlights(char b1, char b2) {
 }
 
 void setup() {
-    pinMode(DE, OUTPUT);
-    pinMode(DC, OUTPUT);
-    pinMode(SE, OUTPUT);
-    pinMode(SC, OUTPUT);
+  pinMode(DE, OUTPUT);
+  pinMode(DC, OUTPUT);
+  pinMode(SE, OUTPUT);
+  pinMode(SC, OUTPUT);
 
-    pinMode(HLPIN, OUTPUT);
-    pinMode(LEDR, OUTPUT);
-    pinMode(LEDG, OUTPUT);
-    pinMode(LEDB, OUTPUT);
-    pinMode(NRDATA, OUTPUT); //DS (Serial data input)
-    pinMode(NRLATCH, OUTPUT); //STCP (Storage register clock input)
-    pinMode(NRCLK, OUTPUT); //SHCP (Shift register clock input)
+  pinMode(HLPIN, OUTPUT);
+  pinMode(LEDR, OUTPUT);
+  pinMode(LEDG, OUTPUT);
+  pinMode(LEDB, OUTPUT);
+  pinMode(NRDATA, OUTPUT); //DS (Serial data input)
+  pinMode(NRLATCH, OUTPUT); //STCP (Storage register clock input)
+  pinMode(NRCLK, OUTPUT); //SHCP (Shift register clock input)
 
-    pinMode(BTSTATE, INPUT);
+  pinMode(BTSTATE, INPUT);
 
-    dir.d = dir.s = dir.f = dir.l = 0;
+  dir.d = dir.s = dir.f = dir.l = 0;
 
-    Serial.begin(9600);
+  Serial.begin(9600);
 }
 
 void loop() {
