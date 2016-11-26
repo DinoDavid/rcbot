@@ -20,6 +20,12 @@
 #define BLUE 0, 0, 255
 #define BLACK 0, 0, 0
 
+#define FORWARD() dir.d = dir.f = 1
+#define BACKWARD() dir.d = !(dir.f = 0)
+#define LEFT() dir.s = dir.l = 1
+#define RIGHT() dir.s = !(dir.l = 0)
+#define HALT() dir.d = dir.s = 0
+
 /* types */
 enum {OFF, UP, DOWN};
 
@@ -107,22 +113,22 @@ void setup() {
 
 void loop() {
   if(digitalRead(BTSTATE) == LOW)
-    halt(); //connection lost
+    HALT(); //connection lost
           
   int c = Serial.read();
   //TODO if old command, skip the if tests
   //TODO if no input, skip the if tests
 
   if (c == 'F' || c == 'G' || c == 'I')
-    dir.d = dir.f = 1; //TODO FORWARD()
+    FORWARD();
   if (c == 'B' || c == 'H' || c == 'J')
-    dir.d = !(dir.f = 0);
+    BACKWARD();
   if (c == 'G' || c == 'H' || c == 'L')
-    dir.s = dir.l = 1;
+    LEFT();
   if (c == 'I' || c == 'J' || c == 'R')
-    dir.s = !(dir.l = 0);
+    RIGHT();
   if (c == 'S') //stop signal
-    dir.d = dir.s = 0;
+    HALT();
   move();
 
   if (c == 'W') //headlight
