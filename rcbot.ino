@@ -23,39 +23,26 @@
 /* types */
 enum {OFF, UP, DOWN};
 
+typedef struct {
+  int d; //drive
+  int s; //steer
+  int f; //forward
+  int l; //left
+} Direction;
+
 /* global variables */
 int hlstate = 0; //headlight state
 int nrstate = OFF; //nightrider state
 unsigned int nrpos = 1; //nightrider led position
 unsigned long time = 0;
+Direction dir;
 
 /* function definitions */
-void forward() {
-  digitalWrite(DE, HIGH);
-  digitalWrite(DC, HIGH);
-  setColor(BLUE); 
-}
-
-void backward() {
-  digitalWrite(DE, HIGH);
-  digitalWrite(DC, LOW);
-  setColor(RED); 
-}
-
-void halt() {
-  analogWrite(DE, 0);
-  analogWrite(SE, 0);
-  setColor(BLACK);
-}
-
-void left() {
-  digitalWrite(SE, HIGH);
-  digitalWrite(SC, HIGH);
-}
-
-void right() {
-  digitalWrite(SE, HIGH);
-  digitalWrite(SC, LOW);
+void move() {
+  digitalWrite(DE, dir.d);
+  digitalWrite(DC, dir.f);
+  digitalWrite(SE, dir.s);
+  digitalWrite(SC, dir.l);
 }
 
 void setColor(int red, int green, int blue) {
@@ -113,6 +100,8 @@ void setup() {
 
     pinMode(BTSTATE, INPUT);
 
+    dir.d = dir.s = dir.f = dir.l = 0;
+
     Serial.begin(9600);
 }
 
@@ -125,15 +114,17 @@ void loop() {
   //TODO if no input, skip the if tests
 
   if (c == 'F' || c == 'G' || c == 'I')
-    forward();
+    dir.d = dir.f = 1; //TODO FORWARD()
   if (c == 'B' || c == 'H' || c == 'J')
-    backward();
+    dir.d = !(dir.f = 0);
   if (c == 'G' || c == 'H' || c == 'L')
-    left();
+    dir.s = dir.l = 1;
   if (c == 'I' || c == 'J' || c == 'R')
-    right();
+    dir.s = !(dir.l = 0);
   if (c == 'S') //stop signal
-      halt();
+    dir.d = dir.s = 0;
+  move();
+
   if (c == 'W') //headlight
     digitalWrite(HLPIN, (hlstate = !hlstate));
   if (c == 'U') //backlight
