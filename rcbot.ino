@@ -44,6 +44,23 @@ unsigned long time = 0;
 Direction dir;
 
 /* function definitions */
+void setcourse(int c) {
+  if (c == 'F' || c == 'G' || c == 'I')
+    FORWARD();
+  else if (c == 'B' || c == 'H' || c == 'J')
+    BACKWARD();
+  else if (c == 'L' || c == 'R')
+    dir.d = 0;
+  if (c == 'G' || c == 'H' || c == 'L')
+    LEFT();
+  else if (c == 'I' || c == 'J' || c == 'R')
+    RIGHT();
+  else if (c == 'F' || c == 'B')
+    dir.s = 0;
+  if (c == 'S') //stop signal
+    HALT();
+}
+
 void move() {
   digitalWrite(DE, dir.d);
   digitalWrite(DC, dir.f);
@@ -119,20 +136,7 @@ void loop() {
   //TODO if old command, skip the if tests
   //TODO if no input, skip the if tests
 
-  if (c == 'F' || c == 'G' || c == 'I')
-    FORWARD();
-  else if (c == 'B' || c == 'H' || c == 'J')
-    BACKWARD();
-  else if (c == 'L' || c == 'R')
-    dir.d = 0;
-  if (c == 'G' || c == 'H' || c == 'L')
-    LEFT();
-  else if (c == 'I' || c == 'J' || c == 'R')
-    RIGHT();
-  else if (c == 'F' || c == 'B')
-    dir.s = 0;
-  if (c == 'S') //stop signal
-    HALT();
+  setcourse(c);
   move();
 
   if (c == 'W') //headlight
