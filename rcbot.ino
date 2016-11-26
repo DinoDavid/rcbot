@@ -7,9 +7,9 @@
 
 #define HLPIN 2 //headlight pin
 #define BTSTATE 8 //bluetooth (HC-05) state
-#define NRDATA 13 //pin 14 on the 75HC595
-#define NRLATCH 3 //pin 12 on the 75HC595
-#define NRCLK 12 //pin 10 on the 75HC595
+#define KRDATA 13 //pin 14 on the 75HC595
+#define KRLATCH 3 //pin 12 on the 75HC595
+#define KRCLK 12 //pin 10 on the 75HC595
 #define LEDR 11 //LED pin red
 #define LEDG 9 //LED pin green
 #define LEDB 10 //LED pin blue
@@ -38,8 +38,8 @@ typedef struct {
 
 /* global variables */
 int hlstate = 0; //headlight state
-int nrstate = OFF; //nightrider state
-unsigned int nrpos = 1; //nightrider led position
+int krstate = OFF; //knightrider state
+unsigned int krpos = 1; //knightrider led position
 unsigned long time = 0;
 Direction dir;
 
@@ -80,31 +80,31 @@ void setColor(int red, int green, int blue) {
   analogWrite(LEDG, green);
   analogWrite(LEDB, blue);  
 }
-void knight_rider() {
+void knightrider() {
   char byte1, byte2;
 
-  if (nrpos >  (1 << 14))
-    nrstate = DOWN;
-  else if (nrpos < (1 << 1))
-    nrstate = UP;
+  if (krpos >  (1 << 14))
+    krstate = DOWN;
+  else if (krpos < (1 << 1))
+    krstate = UP;
 
-  if (nrstate == OFF) {
+  if (krstate == OFF) {
     byte1 = byte2 = 0;
     //TODO dont spam this
   } else {
-    (nrstate == UP) ? nrpos <<= 1 : nrpos >>= 1;
-    byte1 = ((char*)&nrpos)[0];
-    byte2 = ((char*)&nrpos)[1];
+    (krstate == UP) ? krpos <<= 1 : krpos >>= 1;
+    byte1 = ((char*)&krpos)[0];
+    byte2 = ((char*)&krpos)[1];
   }
 
   backlights(byte1, byte2);
 }
 
 void backlights(char b1, char b2) {
-  digitalWrite(NRLATCH, LOW); //commence transmission
-  shiftOut(NRDATA, NRCLK, MSBFIRST, b2); //dont reverse order, fix hardware
-  shiftOut(NRDATA, NRCLK, MSBFIRST, b1);
-  digitalWrite(NRLATCH, HIGH); //close transmission
+  digitalWrite(KRLATCH, LOW); //commence transmission
+  shiftOut(KRDATA, KRCLK, MSBFIRST, b2); //dont reverse order, fix hardware
+  shiftOut(KRDATA, KRCLK, MSBFIRST, b1);
+  digitalWrite(KRLATCH, HIGH); //close transmission
 }
 
 void setup() {
@@ -117,9 +117,9 @@ void setup() {
   pinMode(LEDR, OUTPUT);
   pinMode(LEDG, OUTPUT);
   pinMode(LEDB, OUTPUT);
-  pinMode(NRDATA, OUTPUT); //DS (Serial data input)
-  pinMode(NRLATCH, OUTPUT); //STCP (Storage register clock input)
-  pinMode(NRCLK, OUTPUT); //SHCP (Shift register clock input)
+  pinMode(KRDATA, OUTPUT); //DS (Serial data input)
+  pinMode(KRLATCH, OUTPUT); //STCP (Storage register clock input)
+  pinMode(KRCLK, OUTPUT); //SHCP (Shift register clock input)
 
   pinMode(BTSTATE, INPUT);
 
@@ -142,10 +142,10 @@ void loop() {
   if (c == 'W') //headlight
     digitalWrite(HLPIN, (hlstate = !hlstate));
   if (c == 'U') //backlight
-    nrstate = !nrstate;
+    krstate = !krstate;
 
   if (millis() - time > 40) {
-    knight_rider();
+    knightrider();
     time = millis();
   }
 }
