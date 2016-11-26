@@ -121,12 +121,16 @@ void loop() {
 
   if (c == 'F' || c == 'G' || c == 'I')
     FORWARD();
-  if (c == 'B' || c == 'H' || c == 'J')
+  else if (c == 'B' || c == 'H' || c == 'J')
     BACKWARD();
+  else if (c == 'L' || c == 'R')
+    dir.d = 0;
   if (c == 'G' || c == 'H' || c == 'L')
     LEFT();
-  if (c == 'I' || c == 'J' || c == 'R')
+  else if (c == 'I' || c == 'J' || c == 'R')
     RIGHT();
+  else if (c == 'F' || c == 'B')
+    dir.s = 0;
   if (c == 'S') //stop signal
     HALT();
   move();
