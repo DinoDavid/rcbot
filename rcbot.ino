@@ -69,9 +69,9 @@ void move() {
 }
 
 void lights(int c) {
-  if (c == 'W') //headlight
+  if (c == 'W' || c == 'w') //headlight
     digitalWrite(HLPIN, (hlstate = !hlstate));
-  if (c == 'U') //backlight
+  if (c == 'U' || c == 'u') //backlight
     krstate = !krstate;
   if (dir.d)
     dir.f ? setColor(BLUE) : setColor(RED);
