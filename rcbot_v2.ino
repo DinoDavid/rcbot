@@ -1,30 +1,46 @@
-//L298P H-bridge
-#define DE 5  //drive enable
-#define DC 4  //drive control
-#include <Servo.h> 
+unsigned long t1, t2;
 
-Servo steer;
+enum {
+  SERVO = 9, /* pin number of servo */
+  PERIOD = 20000, /* micro seconds => 50hz */
+  DEG_TO_DUTY = 16
+};
 
 void setup() {
-  pinMode(DE, OUTPUT);
-  pinMode(DC, OUTPUT);
-  steer.attach(9);
+  Serial.begin(9600);
+  pinMode(7, INPUT);
+  pinMode(SERVO, OUTPUT);
+  t1 = 0; /* initialize timer */
 }
 
+void setAngle(unsigned long angle) {
+  size_t duty_cycle;
+
+  duty_cycle = angle*DEG_TO_DUTY;
+
+  t2 = micros(); /* heed delay from other functions */
+  
+  digitalWrite(SERVO, HIGH);
+  delayMicroseconds(duty_cycle);
+  digitalWrite(SERVO, LOW);
+  delayMicroseconds(PERIOD - duty_cycle - (t2-t1));
+  
+  t1 = micros();
+}
+
+char c = 0, a = 0;
+
+/* 0-20 and 3-17 */
 void loop() {
-
-  digitalWrite(DE, HIGH);
-  digitalWrite(DC, LOW);
-  steer.write(150);
-
-  delay(3000); 
-  
-  digitalWrite(DE, HIGH);
-  digitalWrite(DC, HIGH);
-  steer.write(50);
-
-  delay(3000);
-  
+  if (Serial.available() > 0)
+    c = Serial.read();
+    
+  //Serial.println("I received: " + c);
+ 
+  if (c < '0' || '9' < c)
+    a = 90;
+  else 
+    a = (c - '0') * 20;
+    
+  setAngle(a);
 }
-
-
